@@ -9,7 +9,7 @@ public interface InternalChannel extends Channel, Comparable<InternalChannel> {
 
     String toSubscribeMessage();
 
-    String toUnsubscribeMessage();
+    String getUnsubscribeMessage();
 
     PusherEvent prepareEvent(String event, String message);
 

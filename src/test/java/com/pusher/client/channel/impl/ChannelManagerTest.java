@@ -64,7 +64,7 @@ public class ChannelManagerTest {
         }).when(factory).queueOnEventThread(any(Runnable.class));
         when(mockInternalChannel.getName()).thenReturn(CHANNEL_NAME);
         when(mockInternalChannel.toSubscribeMessage()).thenReturn(OUTGOING_SUBSCRIBE_MESSAGE);
-        when(mockInternalChannel.toUnsubscribeMessage()).thenReturn(OUTGOING_UNSUBSCRIBE_MESSAGE);
+        when(mockInternalChannel.getUnsubscribeMessage()).thenReturn(OUTGOING_UNSUBSCRIBE_MESSAGE);
         when(mockInternalChannel.getEventListener()).thenReturn(mockEventListener);
         when(mockConnection.getSocketId()).thenReturn(SOCKET_ID);
         when(mockConnection.getState()).thenReturn(ConnectionState.CONNECTED);

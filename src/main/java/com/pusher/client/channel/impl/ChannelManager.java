@@ -161,7 +161,7 @@ public class ChannelManager implements ConnectionEventListener {
         factory.queueOnEventThread(new Runnable() {
             @Override
             public void run() {
-                connection.sendMessage(channel.toUnsubscribeMessage());
+                connection.sendMessage(channel.getUnsubscribeMessage());
                 channel.updateState(ChannelState.UNSUBSCRIBED);
             }
         });
