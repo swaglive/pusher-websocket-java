@@ -80,7 +80,7 @@ public class ChannelImplTest {
     @Test
     public void testReturnsCorrectSubscribeMessage() {
         assertEquals("{\"event\":\"pusher:subscribe\",\"data\":{\"channel\":\"" + getChannelName() + "\"}}",
-                channel.toSubscribeMessage());
+                channel.getSubscribeMessage());
     }
 
     @Test

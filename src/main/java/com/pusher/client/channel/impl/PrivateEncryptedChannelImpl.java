@@ -7,6 +7,7 @@ import com.pusher.client.channel.PrivateEncryptedChannel;
 import com.pusher.client.channel.PrivateEncryptedChannelEventListener;
 import com.pusher.client.channel.PusherEvent;
 import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.channel.impl.message.SubscribeMessage;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
@@ -69,20 +70,9 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
     }
 
     @Override
-    public String toSubscribeMessage() {
-        String authKey = authenticate();
+    public String getSubscribeMessage() {
 
-        // create the data part
-        final Map<Object, Object> dataMap = new LinkedHashMap<>();
-        dataMap.put("channel", name);
-        dataMap.put("auth", authKey);
-
-        // create the wrapper part
-        final Map<Object, Object> jsonObject = new LinkedHashMap<>();
-        jsonObject.put("event", "pusher:subscribe");
-        jsonObject.put("data", dataMap);
-
-        return GSON.toJson(jsonObject);
+        return GSON.toJson(new SubscribeMessage(name, authenticate(), null));
     }
 
     private String authenticate() {

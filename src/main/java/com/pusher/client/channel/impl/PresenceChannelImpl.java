@@ -66,8 +66,8 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
     }
 
     @Override
-    public String toSubscribeMessage() {
-        String msg = super.toSubscribeMessage();
+    public String getSubscribeMessage() {
+        String msg = super.getSubscribeMessage();
         myUserID = extractUserIdFromChannelData(channelData);
         return msg;
     }

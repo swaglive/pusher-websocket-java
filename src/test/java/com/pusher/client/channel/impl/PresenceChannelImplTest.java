@@ -27,8 +27,10 @@ import com.pusher.client.channel.User;
 @RunWith(MockitoJUnitRunner.class)
 public class PresenceChannelImplTest extends PrivateChannelImplTest {
 
-    private static final String AUTH_RESPONSE = "\"auth\":\"a87fe72c6f36272aa4b1:f9db294eae7\",\"channel_data\":\"{\\\"user_id\\\":\\\"5116a4519575b\\\",\\\"user_info\\\":{\\\"name\\\":\\\"Phil Leggetter\\\",\\\"twitter_id\\\":\\\"@leggetter\\\"}}\"";
-    private static final String AUTH_RESPONSE_NUMERIC_ID = "\"auth\":\"a87fe72c6f36272aa4b1:f9db294eae7\",\"channel_data\":\"{\\\"user_id\\\":51169,\\\"user_info\\\":{\\\"name\\\":\\\"Phil Leggetter\\\",\\\"twitter_id\\\":\\\"@leggetter\\\"}}\"";
+    private static final String AUTH_RESPONSE = "\"auth\":\"a87fe72c6f36272aa4b1:f9db294eae7\"";
+    private static final String AUTH_RESPONSE_CHANNEL_DATA = "\"channel_data\":\"{\\\"user_id\\\":\\\"5116a4519575b\\\",\\\"user_info\\\":{\\\"name\\\":\\\"Phil Leggetter\\\",\\\"twitter_id\\\":\\\"@leggetter\\\"}}\"";
+    private static final String AUTH_RESPONSE_NUMERIC_ID = "\"auth\":\"a87fe72c6f36272aa4b1:f9db294eae7\"";
+    private static final String AUTH_RESPONSE_NUMERIC_ID_CHANNEL_DATA = "\"channel_data\":\"{\\\"user_id\\\":51169,\\\"user_info\\\":{\\\"name\\\":\\\"Phil Leggetter\\\",\\\"twitter_id\\\":\\\"@leggetter\\\"}}\"";
     private static final String USER_ID = "5116a4519575b";
 
     @Mock
@@ -39,30 +41,36 @@ public class PresenceChannelImplTest extends PrivateChannelImplTest {
     public void setUp() {
         super.setUp();
         channel.setEventListener(mockEventListener);
-        when(mockAuthorizer.authorize(eq(getChannelName()), anyString())).thenReturn("{" + AUTH_RESPONSE + "}");
+        when(mockAuthorizer.authorize(eq(getChannelName()), anyString())).thenReturn("{" + AUTH_RESPONSE + "," + AUTH_RESPONSE_CHANNEL_DATA + "}");
     }
 
     @Test
     @Override
     public void testReturnsCorrectSubscribeMessage() {
-        final String message = channel.toSubscribeMessage();
-        assertEquals("{\"event\":\"pusher:subscribe\",\"data\":{\"channel\":\"" + getChannelName() + "\","
-                + AUTH_RESPONSE + "}}", message);
+        final String message = channel.getSubscribeMessage();
+        assertEquals("{\"event\":\"pusher:subscribe\",\"data\":{"
+                + AUTH_RESPONSE
+                + ",\"channel\":\"" + getChannelName() + "\","
+                + AUTH_RESPONSE_CHANNEL_DATA+ "}}",
+                message);
     }
 
     @Test
     public void testReturnsCorrectSubscribeMessageWhenNumericId() {
         when(mockAuthorizer.authorize(eq(getChannelName()), anyString())).thenReturn(
-                "{" + AUTH_RESPONSE_NUMERIC_ID + "}");
+                "{" + AUTH_RESPONSE_NUMERIC_ID + "," + AUTH_RESPONSE_NUMERIC_ID_CHANNEL_DATA + "}");
 
-        final String message = channel.toSubscribeMessage();
-        assertEquals("{\"event\":\"pusher:subscribe\",\"data\":{\"channel\":\"" + getChannelName() + "\","
-                + AUTH_RESPONSE_NUMERIC_ID + "}}", message);
+        final String message = channel.getSubscribeMessage();
+        assertEquals("{\"event\":\"pusher:subscribe\",\"data\":{"
+                + AUTH_RESPONSE_NUMERIC_ID
+                + ",\"channel\":\"" + getChannelName() + "\","
+                + AUTH_RESPONSE_NUMERIC_ID_CHANNEL_DATA+ "}}",
+                message);
     }
 
     @Test
     public void testStoresCorrectUser() {
-        channel.toSubscribeMessage();
+        channel.getSubscribeMessage();
         channel.onMessage("pusher_internal:subscription_succeeded",
         "{\"event\":\"pusher_internal:subscription_succeeded\",\"data\":\"{\\\"presence\\\":{\\\"count\\\":1,\\\"ids\\\":[\\\"5116a4519575b\\\"],\\\"hash\\\":{\\\"5116a4519575b\\\":{\\\"name\\\":\\\"Phil Leggetter\\\",\\\"twitter_id\\\":\\\"@leggetter\\\"}}}}\",\"channel\":\"presence-myChannel\"}");
         assertEquals(USER_ID, ((PresenceChannelImpl)channel).getMe().getId());
