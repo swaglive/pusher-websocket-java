@@ -13,6 +13,7 @@ import com.pusher.client.channel.PrivateChannel;
 import com.pusher.client.channel.PrivateChannelEventListener;
 import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.channel.impl.message.SubscribeMessage;
+import com.pusher.client.channel.impl.message.TriggerMessage;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.impl.InternalConnection;
 import com.pusher.client.util.Factory;
@@ -54,21 +55,9 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
                     + connection.getState().toString() + " state");
         }
 
-        try {
-
-            final Map<Object, Object> jsonPayload = new LinkedHashMap<Object, Object>();
-            jsonPayload.put("event", eventName);
-            jsonPayload.put("channel", name);
-            jsonPayload.put("data", data);
-
-            final String jsonMessage = GSON.toJson(jsonPayload);
-            connection.sendMessage(jsonMessage);
-
-        }
-        catch (final JsonSyntaxException e) {
-            throw new IllegalArgumentException("Cannot trigger event " + eventName + " because \"" + data
-                    + "\" could not be parsed as valid JSON");
-        }
+        connection.sendMessage(
+                GSON.toJson(
+                        new TriggerMessage(eventName, name, data)));
     }
 
     /* Base class overrides */
