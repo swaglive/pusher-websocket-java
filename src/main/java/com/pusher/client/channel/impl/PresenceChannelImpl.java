@@ -55,14 +55,16 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
 
         super.onMessage(event, message);
 
-        if (event.equals(SUBSCRIPTION_SUCCESS_EVENT)) {
-            handleSubscriptionSuccessfulMessage(message);
-        }
-        else if (event.equals(MEMBER_ADDED_EVENT)) {
-            handleMemberAddedEvent(message);
-        }
-        else if (event.equals(MEMBER_REMOVED_EVENT)) {
-            handleMemberRemovedEvent(message);
+        switch (event) {
+            case SUBSCRIPTION_SUCCESS_EVENT:
+                handleSubscriptionSuccessfulMessage(message);
+                break;
+            case MEMBER_ADDED_EVENT:
+                handleMemberAddedEvent(message);
+                break;
+            case MEMBER_REMOVED_EVENT:
+                handleMemberRemovedEvent(message);
+                break;
         }
     }
 
@@ -76,7 +78,7 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
     @Override
     public void bind(final String eventName, final SubscriptionEventListener listener) {
 
-        if (listener instanceof PresenceChannelEventListener == false) {
+        if (!(listener instanceof PresenceChannelEventListener)) {
             throw new IllegalArgumentException(
                     "Only instances of PresenceChannelEventListener can be bound to a presence channel");
         }
