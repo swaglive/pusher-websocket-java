@@ -9,6 +9,7 @@ import com.pusher.client.channel.PrivateEncryptedChannelEventListener;
 import com.pusher.client.channel.PusherEvent;
 import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.channel.impl.message.AuthResponse;
+import com.pusher.client.channel.impl.message.EncryptedReceivedData;
 import com.pusher.client.channel.impl.message.SubscribeMessage;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
@@ -20,7 +21,6 @@ import com.pusher.client.crypto.nacl.SecretBoxOpenerFactory;
 import com.pusher.client.util.Factory;
 import com.pusher.client.util.internal.Base64;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -143,19 +143,6 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
                 ((PrivateEncryptedChannelEventListener)listener).onDecryptionFailure(
                         event, reason);
             }
-        }
-    }
-
-    private class EncryptedReceivedData {
-        String nonce;
-        String ciphertext;
-
-        public byte[] getNonce() {
-            return Base64.decode(nonce);
-        }
-
-        public byte[] getCiphertext() {
-            return Base64.decode(ciphertext);
         }
     }
 
