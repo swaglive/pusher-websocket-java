@@ -1,12 +1,11 @@
 package com.pusher.client.channel.impl;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import com.google.gson.Gson;
+import com.pusher.client.channel.ChannelEventListener;
+import com.pusher.client.channel.ChannelState;
+import com.pusher.client.channel.PresenceChannelEventListener;
+import com.pusher.client.channel.PrivateChannelEventListener;
+import com.pusher.client.channel.User;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,13 +15,19 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.google.gson.Gson;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
-import com.pusher.client.channel.ChannelEventListener;
-import com.pusher.client.channel.ChannelState;
-import com.pusher.client.channel.PresenceChannelEventListener;
-import com.pusher.client.channel.PrivateChannelEventListener;
-import com.pusher.client.channel.User;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PresenceChannelImplTest extends PrivateChannelImplTest {
@@ -193,6 +198,20 @@ public class PresenceChannelImplTest extends PrivateChannelImplTest {
         final User user = argument.getValue();
         assertEquals(userId, user.getId());
         assertEquals("{\"name\":\"Phil Leggetter\",\"twitter_id\":\"@leggetter\"}", user.getInfo());
+    }
+
+    @Test
+    public void testExtractUserIdFromChannelData() {
+        final String stringChannelData = "{\"user_id\":\"5116a4519575b\"}";
+        String userId = ((PresenceChannelImpl)channel).extractUserIdFromChannelData(stringChannelData);
+        assertEquals("5116a4519575b", userId);
+    }
+
+    @Test
+    public void testExtractUserIdFromChannelDataInt() {
+        final String stringChannelData = "{\"user_id\":5116}";
+        String userId = ((PresenceChannelImpl)channel).extractUserIdFromChannelData(stringChannelData);
+        assertEquals("5116", userId);
     }
 
     @Test(expected = IllegalArgumentException.class)

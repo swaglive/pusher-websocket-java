@@ -10,6 +10,7 @@ import com.pusher.client.channel.PresenceChannel;
 import com.pusher.client.channel.PresenceChannelEventListener;
 import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.channel.User;
+import com.pusher.client.channel.impl.message.ChannelData;
 import com.pusher.client.connection.impl.InternalConnection;
 import com.pusher.client.util.Factory;
 
@@ -162,25 +163,22 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
         return GSON.fromJson(dataString, Presence.class).presence;
     }
 
-    @SuppressWarnings("rawtypes")
-    private String extractUserIdFromChannelData(final String channelData) {
-        final Map channelDataMap;
+    public String extractUserIdFromChannelData(final String channelDataString) {
         try {
-            channelDataMap = GSON.fromJson((String)channelData, Map.class);
+            ChannelData data = GSON.fromJson(channelDataString, ChannelData.class);
+
+            if (data.getUserId() == null) {
+                throw new AuthorizationFailureException("Invalid response from Authorizer: no user_id key in channel_data object: " + channelDataString);
+            }
+
+            return data.getUserId();
+
         } catch (final JsonSyntaxException e) {
-            throw new AuthorizationFailureException("Invalid response from Authorizer: unable to parse channel_data object: " + channelData, e);
-        }
-        Object maybeUserId;
-        try {
-            maybeUserId = channelDataMap.get("user_id");
+            throw new AuthorizationFailureException("Invalid response from Authorizer: unable to parse channel_data object: " + channelDataString, e);
         } catch (final NullPointerException e) {
-            throw new AuthorizationFailureException("Invalid response from Authorizer: no user_id key in channel_data object: " + channelData);
+            throw new AuthorizationFailureException("Invalid response from Authorizer: no user_id key in channel_data object: " + channelDataString);
         }
-        if (maybeUserId == null) {
-            throw new AuthorizationFailureException("Invalid response from Authorizer: no user_id key in channel_data object: " + channelData);
-        }
-        // user_id can be a string or an integer in the Channels websocket protocol
-        return String.valueOf(maybeUserId);
+
     }
 
     private class MemberData {
