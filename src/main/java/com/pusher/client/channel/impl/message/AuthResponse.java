@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class AuthResponse {
     private String auth;
+
+    // we want to keep this as a String until needed because we send this back on requests
     @SerializedName("channel_data")
     private String channelData;
 
@@ -21,4 +23,5 @@ public class AuthResponse {
     public String getSharedSecret() {
         return sharedSecret;
     }
+
 }

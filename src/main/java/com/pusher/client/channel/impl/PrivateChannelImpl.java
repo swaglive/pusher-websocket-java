@@ -1,8 +1,5 @@
 package com.pusher.client.channel.impl;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -38,7 +35,6 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
     /* PrivateChannel implementation */
 
     @Override
-    @SuppressWarnings("rawtypes")
     public void trigger(final String eventName, final String data) {
 
         if (eventName == null || !eventName.startsWith(CLIENT_EVENT_PREFIX)) {
@@ -66,7 +62,7 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
     @Override
     public void bind(final String eventName, final SubscriptionEventListener listener) {
 
-        if (listener instanceof PrivateChannelEventListener == false) {
+        if (!(listener instanceof PrivateChannelEventListener)) {
             throw new IllegalArgumentException(
                     "Only instances of PrivateChannelEventListener can be bound to a private channel");
         }
