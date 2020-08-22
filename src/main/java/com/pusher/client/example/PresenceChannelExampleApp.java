@@ -99,6 +99,11 @@ public class PresenceChannelExampleApp {
             }
 
             @Override
+            public void onChannelDataReceived(String data) {
+
+            }
+
+            @Override
             public void onUsersInformationReceived(String channelName, Set<User> users) {
                 System.out.println("Received user information");
                 printCurrentlySubscribedUsers();

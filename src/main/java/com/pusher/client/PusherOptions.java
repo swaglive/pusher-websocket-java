@@ -3,6 +3,7 @@ package com.pusher.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Proxy;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -27,6 +28,9 @@ public class PusherOptions {
 
     private static final int MAX_RECONNECTION_ATTEMPTS = 6; //Taken from the Swift lib
     private static final int MAX_RECONNECT_GAP_IN_SECONDS = 30;
+    private static final long DEFAULT_AUTH_REQUEST_DELAY = 2000;
+    private static final int DEFAUT_MAX_REQUEST_PER_BATCH = 1;
+
 
     // Note that the primary cluster lives on a different domain
     // (others are subdomains of pusher.com). This is not an oversight.
@@ -42,6 +46,34 @@ public class PusherOptions {
     private int maxReconnectionAttempts = MAX_RECONNECTION_ATTEMPTS;
     private int maxReconnectGapInSeconds = MAX_RECONNECT_GAP_IN_SECONDS;
 
+    private long authDelay = DEFAULT_AUTH_REQUEST_DELAY;
+    private ArrayList<String> mCriticalChannelPrefixList = new ArrayList<>();
+
+    private int maxRequestPerBatch = DEFAUT_MAX_REQUEST_PER_BATCH;
+
+    public Long getAuthDelay() {
+        return authDelay;
+    }
+
+    public void setAuthDelay(Long authDelay) {
+        this.authDelay = authDelay;
+    }
+
+    public ArrayList<String> getCriticalChannelPrefixList() {
+        return mCriticalChannelPrefixList;
+    }
+
+    public void setCriticalChannelPrefixList(ArrayList<String> criticalChannelList) {
+        this.mCriticalChannelPrefixList = criticalChannelList;
+    }
+
+    public int getMaxRequestPerBatch() {
+        return maxRequestPerBatch;
+    }
+
+    public void setMaxRequestPerBatch(int maxRequestPerBatch) {
+        this.maxRequestPerBatch = maxRequestPerBatch;
+    }
     /**
      * @deprecated
      * Please use isUseTLS

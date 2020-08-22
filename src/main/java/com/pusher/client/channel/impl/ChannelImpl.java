@@ -10,7 +10,9 @@ import com.google.gson.Gson;
 
 import com.google.gson.GsonBuilder;
 import com.pusher.client.channel.*;
+import com.pusher.client.crypto.nacl.SecretBoxOpener;
 import com.pusher.client.util.Factory;
+import com.pusher.client.util.internal.Base64;
 
 public class ChannelImpl implements InternalChannel {
     protected final Gson GSON;
@@ -87,11 +89,61 @@ public class ChannelImpl implements InternalChannel {
         return state == ChannelState.SUBSCRIBED;
     }
 
+    @Override
+    public boolean isInitial() {
+        return state == ChannelState.INITIAL;
+    }
+
+    @Override
+    public ChannelState getState() {
+        return state;
+    }
     /* InternalChannel implementation */
 
     @Override
     public PusherEvent prepareEvent(String event, String message) {
+        if (this instanceof PrivateChannelImpl) {
+            PrivateChannelImpl p = (PrivateChannelImpl)(this);
+            PusherEvent e = decryptMessage(p.secretBoxOpener, message);
+            return e;
+        }
+        if (this instanceof PresenceChannelImpl) {
+            PresenceChannelImpl p = (PresenceChannelImpl)(this);
+            PusherEvent e = decryptMessage(p.secretBoxOpener, message);
+            return e;
+        }
         return GSON.fromJson(message, PusherEvent.class);
+    }
+
+
+    private class EncryptedReceivedData {
+        String nonce;
+        String ciphertext;
+
+        public byte[] getNonce() {
+            return Base64.decode(nonce);
+        }
+
+        public byte[] getCiphertext() {
+            return Base64.decode(ciphertext);
+        }
+    }
+
+    private PusherEvent decryptMessage(SecretBoxOpener opener, String message) {
+
+        Map<String, Object> receivedMessage =
+                GSON.<Map<String, Object>>fromJson(message, Map.class);
+
+        final EncryptedReceivedData encryptedReceivedData =
+                GSON.fromJson((String)receivedMessage.get("data"), EncryptedReceivedData.class);
+
+        String decryptedData = opener.open(
+                encryptedReceivedData.getCiphertext(),
+                encryptedReceivedData.getNonce());
+
+        receivedMessage.put("data", decryptedData);
+
+        return new PusherEvent(receivedMessage);
     }
 
     @Override
@@ -119,7 +171,7 @@ public class ChannelImpl implements InternalChannel {
 
 
     @Override
-    public String toSubscribeMessage() {
+    public String toSubscribeMessage(String authResponse) {
 
         final Map<Object, Object> jsonObject = new LinkedHashMap<Object, Object>();
         jsonObject.put("event", "pusher:subscribe");
@@ -186,7 +238,7 @@ public class ChannelImpl implements InternalChannel {
 
 
     protected String[] getDisallowedNameExpressions() {
-        return new String[] { "^private-.*", "^presence-.*" };
+        return new String[] { "^private-enc-.*", "^presence-enc-.*" };
     }
 
     private void validateArguments(final String eventName, final SubscriptionEventListener listener) {

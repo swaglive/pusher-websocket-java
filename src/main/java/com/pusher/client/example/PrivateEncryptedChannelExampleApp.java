@@ -101,7 +101,12 @@ public class PrivateEncryptedChannelExampleApp {
                         "Authentication failure due to [%s], exception was [%s]", message, e));
             }
 
-            @Override
+                    @Override
+                    public void onChannelDataReceived(String data) {
+
+                    }
+
+                    @Override
             public void onDecryptionFailure(String event, String reason) {
                 System.out.println(String.format(
                         "An error was received decrypting message for event:[%s] - reason: [%s]", event, reason));
