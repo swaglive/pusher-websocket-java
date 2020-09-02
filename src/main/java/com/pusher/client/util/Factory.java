@@ -85,7 +85,7 @@ public class Factory {
 
     public PrivateChannelImpl newPrivateChannel(final InternalConnection connection, final String channelName,
             final Authorizer authorizer) {
-        return new PrivateChannelImpl(connection, channelName, authorizer, this);
+        return new PrivateChannelImpl(connection, channelName, authorizer, this, new SecretBoxOpenerFactory());
     }
 
     public PrivateEncryptedChannelImpl newPrivateEncryptedChannel(
