@@ -13,6 +13,7 @@ import com.pusher.client.AuthRequestHandler;
 import com.pusher.client.AuthorizationFailureException;
 import com.pusher.client.AuthorizationMissingException;
 import com.pusher.client.PusherOptions;
+import com.pusher.client.SecretboxOpenerRemovedException;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.ChannelEventListener;
 import com.pusher.client.channel.ChannelState;
@@ -147,7 +148,11 @@ public class ChannelManager implements ConnectionEventListener {
             final InternalChannel channel = channelNameToChannelMap.get(channelName);
 
             if (channel != null) {
-                channel.onMessage(event, wholeMessage);
+                try {
+                    channel.onMessage(event, wholeMessage);
+                } catch (SecretboxOpenerRemovedException e) {
+                    pusherAuthRequestHandler.warningLog(e);
+                }
             }
         }
     }

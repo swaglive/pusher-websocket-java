@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.gson.Gson;
 
 import com.google.gson.GsonBuilder;
+import com.pusher.client.SecretboxOpenerRemovedException;
 import com.pusher.client.channel.*;
 import com.pusher.client.crypto.nacl.SecretBoxOpener;
 import com.pusher.client.util.Factory;
@@ -130,6 +131,13 @@ public class ChannelImpl implements InternalChannel {
     }
 
     private PusherEvent decryptMessage(SecretBoxOpener opener, String message) {
+        if (opener == null) {
+            if (message != null) {
+                throw new SecretboxOpenerRemovedException("unable to parse message: " + message);
+            } else {
+                throw new SecretboxOpenerRemovedException("unable to parse message: ");
+            }
+        }
 
         Map<String, Object> receivedMessage =
                 GSON.<Map<String, Object>>fromJson(message, Map.class);
