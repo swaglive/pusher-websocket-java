@@ -164,6 +164,7 @@ public class ChannelManager implements ConnectionEventListener {
 
         if (change.getCurrentState() == ConnectionState.CONNECTED) {
             for(final InternalChannel channel : channelNameToChannelMap.values()){
+                channel.updateState(ChannelState.INITIAL);
                 sendOrQueueSubscribeMessage(channel);
             }
         }
