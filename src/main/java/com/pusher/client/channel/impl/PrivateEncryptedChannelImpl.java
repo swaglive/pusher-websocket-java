@@ -96,7 +96,8 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
 
             if (auth == null || sharedSecret == null) {
                 throw new AuthorizationFailureException("Didn't receive all the fields expected " +
-                        "from the Authorizer, expected an auth and shared_secret.");
+                        "from the Authorizer, expected an auth and shared_secret." +
+                        "origin: " + r);
             } else {
                 createSecretBoxOpener(Base64.decode(sharedSecret));
                 return auth;
@@ -105,7 +106,7 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
             throw e; // pass this upwards
         } catch (final Exception e) {
             // any other errors need to be captured properly and passed upwards
-            throw new AuthorizationFailureException("Unable to parse response from Authorizer", e);
+            throw new AuthorizationFailureException("Unable to parse response from Authorizer: " + r, e);
         }
     }
 
