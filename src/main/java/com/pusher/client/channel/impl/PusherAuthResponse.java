@@ -13,12 +13,16 @@ public class PusherAuthResponse {
     @SerializedName("shared_secret")
     String sharedSecret;
 
+    @SerializedName("reason")
+    String reason;
+
     @Override
     public String toString() {
         return "PusherAuthResponse{" +
                 "auth='" + auth + '\'' +
                 ", channelData='" + channelData + '\'' +
                 ", sharedSecret='" + sharedSecret + '\'' +
+                ", reason='" + reason + '\'' +
                 '}';
     }
 }
