@@ -40,7 +40,7 @@ ext.sharedManifest = manifest {
 
 repositories {
 	mavenCentral()
-	jcenter()
+//	jcenter()
 }
 
 dependencies {
