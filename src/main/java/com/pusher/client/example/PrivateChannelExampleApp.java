@@ -96,7 +96,7 @@ public class PrivateChannelExampleApp {
             }
 
             @Override
-            public void onChannelDataReceived(String data) {
+            public void onChannelDataReceived(String channelName, String data) {
 
             }
         };
