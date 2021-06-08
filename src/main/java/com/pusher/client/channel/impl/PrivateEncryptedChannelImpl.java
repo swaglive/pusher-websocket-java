@@ -69,8 +69,8 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
     }
 
     @Override
-    public String toSubscribeMessage() {
-        String authKey = authenticate();
+    public String toSubscribeMessage(String authResponse) {
+        String authKey = authenticate(authResponse);
 
         // create the data part
         final Map<Object, Object> dataMap = new LinkedHashMap<>();
@@ -85,10 +85,11 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
         return GSON.toJson(jsonObject);
     }
 
-    private String authenticate() {
+    private String authenticate(String r) {
         try {
             @SuppressWarnings("rawtypes") // anything goes in JS
-            final Map authResponse = GSON.fromJson(getAuthResponse(), Map.class);
+//            final Map authResponse = GSON.fromJson(getAuthResponse(), Map.class);
+            final Map authResponse = GSON.fromJson(r, Map.class);
 
             final String auth = (String) authResponse.get("auth");
             final String sharedSecret = (String) authResponse.get("shared_secret");
@@ -136,7 +137,7 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
 
             // retry once only.
             disposeSecretBoxOpener();
-            authenticate();
+            authenticate(null);
 
             try {
                 return decryptMessage(message);
@@ -210,7 +211,7 @@ public class PrivateEncryptedChannelImpl extends ChannelImpl implements PrivateE
 
     @Override
     protected String[] getDisallowedNameExpressions() {
-        return new String[] { "^(?!private-encrypted-).*" };
+        return new String[] { "^(?!private-enc-).*" };
     }
 
     @Override

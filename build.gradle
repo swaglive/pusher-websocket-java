@@ -46,6 +46,8 @@ repositories {
 dependencies {
 	compile "com.google.code.gson:gson:2.2.2"
 	compile "org.java-websocket:Java-WebSocket:1.5.1"
+	implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.12'
+	implementation 'com.github.davidmoten:rxjava2-extras:0.1.38'
 
 	testCompile "org.mockito:mockito-all:1.8.5"
 	testCompile "org.powermock:powermock-module-junit4:1.4.11"
@@ -190,9 +192,9 @@ task createPublishTarget {
 	}
 }
 
-wrapper {
-	gradleVersion = '5.5.1'
-}
+//wrapper {
+//	gradleVersion = '5.5.1'
+//}
 
 jacoco {
 	toolVersion = "0.8.4"

@@ -11,6 +11,7 @@ import com.pusher.client.channel.PresenceChannelEventListener;
 import com.pusher.client.channel.SubscriptionEventListener;
 import com.pusher.client.channel.User;
 import com.pusher.client.connection.impl.InternalConnection;
+import com.pusher.client.crypto.nacl.SecretBoxOpenerFactory;
 import com.pusher.client.util.Factory;
 
 import java.util.Collections;
@@ -32,7 +33,7 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
 
     public PresenceChannelImpl(final InternalConnection connection, final String channelName,
             final Authorizer authorizer, final Factory factory) {
-        super(connection, channelName, authorizer, factory);
+        super(connection, channelName, authorizer, factory, new SecretBoxOpenerFactory());
     }
 
     /* PresenceChannel implementation */
@@ -66,8 +67,8 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
     }
 
     @Override
-    public String toSubscribeMessage() {
-        String msg = super.toSubscribeMessage();
+    public String toSubscribeMessage(String authResponse) {
+        String msg = super.toSubscribeMessage(authResponse);
         myUserID = extractUserIdFromChannelData(channelData);
         return msg;
     }
@@ -85,7 +86,7 @@ public class PresenceChannelImpl extends PrivateChannelImpl implements PresenceC
 
     @Override
     protected String[] getDisallowedNameExpressions() {
-        return new String[] { "^(?!presence-).*" };
+        return new String[] { "^(?!presence-enc-).*" };
     }
 
     @Override

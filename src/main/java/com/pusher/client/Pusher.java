@@ -20,6 +20,8 @@ import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.impl.InternalConnection;
 import com.pusher.client.util.Factory;
 
+import java.util.Collection;
+
 /**
  * This class is the main entry point for accessing Pusher.
  *
@@ -104,7 +106,16 @@ public class Pusher implements Client {
         this.factory = factory;
         connection = factory.getConnection(apiKey, this.pusherOptions);
         channelManager = factory.getChannelManager();
+        channelManager.setPusherOptions(pusherOptions);
         channelManager.setConnection(connection);
+    }
+
+    public void setRequestHandler(AuthRequestHandler handler ) {
+        channelManager.setPusherAuthRequestHandler(handler);
+    }
+
+    private AuthRequestHandler getRequestHandler() {
+        return channelManager.getPusherAuthRequestHandler();
     }
 
     /* Connection methods */
@@ -372,7 +383,7 @@ public class Pusher implements Client {
     /* implementation detail */
 
     private void throwExceptionIfNoAuthorizerHasBeenSet() {
-        if (pusherOptions.getAuthorizer() == null) {
+        if (pusherOptions.getAuthorizer() == null && channelManager.getPusherAuthRequestHandler() == null) {
             throw new IllegalStateException(
                     "Cannot subscribe to a private or presence channel because no Authorizer has been set. Call PusherOptions.setAuthorizer() before connecting to Pusher");
         }
@@ -388,6 +399,13 @@ public class Pusher implements Client {
         return channelManager.getChannel(channelName);
     }
 
+    /**
+     * @return A list of channels
+     *
+     * */
+    public Collection<InternalChannel> getChannelList() {
+        return channelManager.getChannelList();
+    }
     /**
      *
      * @param channelName The name of the private channel to be retrieved

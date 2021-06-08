@@ -94,6 +94,11 @@ public class PrivateChannelExampleApp {
                 System.out.println(String.format(
                         "Authentication failure due to [%s], exception was [%s]", message, e));
             }
+
+            @Override
+            public void onChannelDataReceived(String channelName, String data) {
+
+            }
         };
 
         // subscribe to the channel and with the event listener for the event name
