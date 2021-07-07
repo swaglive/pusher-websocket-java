@@ -12,5 +12,5 @@ public interface PrivateChannelEventListener extends ChannelEventListener {
      */
     void onAuthenticationFailure(String message, Exception e);
 
-    void onChannelDataReceived(String data);
+    void onChannelDataReceived(String channelName, String data);
 }

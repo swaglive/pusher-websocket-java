@@ -192,9 +192,9 @@ task createPublishTarget {
 	}
 }
 
-wrapper {
-	gradleVersion = '5.5.1'
-}
+//wrapper {
+//	gradleVersion = '5.5.1'
+//}
 
 jacoco {
 	toolVersion = "0.8.4"

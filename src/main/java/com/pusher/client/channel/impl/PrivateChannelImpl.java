@@ -128,7 +128,7 @@ public class PrivateChannelImpl extends ChannelImpl implements PrivateChannel {
         final ChannelEventListener listener = getEventListener();
         if (listener instanceof PrivateChannelEventListener) {
             final PrivateChannelEventListener privateListener = (PrivateChannelEventListener)listener;
-            privateListener.onChannelDataReceived(channelData);
+            privateListener.onChannelDataReceived(getName(), channelData);
         }
     }
 
